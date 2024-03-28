@@ -5,12 +5,15 @@ super + space
   dmenu_run -l 10 
 
 Super_L ; space ; a ; w
-  google-chrome-stable
+  qutebrowser
 
 Super_L ; space ; f ; e ; {d, R}
   {alacritty --command nvim ~/.config/sxhkd/sxhkdrc, killall -s SIGUSR1 sxhkd}
 
-Super_L ; space ; q ; {q,r}
+Super_L ; space ; i ; P ; {P}
+  {passmenu}
+ 
+Super_L ; space ; q ; {q,R}
   shutdown -{h,r} now
 
 Super_L ; space ; w ; {d, m}
