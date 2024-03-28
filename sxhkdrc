@@ -7,8 +7,8 @@ super + space
 Super_L ; space ; a ; w
   google-chrome-stable
 
-Super_L ; space ; f ; e ; R
-  killall -s SIGUSR1 sxhkd
+Super_L ; space ; f ; e ; {d, R}
+  {alacritty --command nvim ~/.config/sxhkd/sxhkdrc, killall -s SIGUSR1 sxhkd}
 
 Super_L ; space ; q ; q
   shutdown -h now
