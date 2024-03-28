@@ -1,7 +1,7 @@
 Super_L ; space ; apostrophe
   alacritty
 
-Super_L ; colon
+super + space
   dmenu_run -l 10 
 
 Super_L ; space ; a ; w
@@ -13,8 +13,8 @@ Super_L ; space ; f ; e ; R
 Super_L ; space ; q ; q
   shutdown -h now
 
-Super_L ; space ; w ; d
-  i3-msg "kill"
+Super_L ; space ; w ; {d, m}
+  i3-msg {kill, fullscreen toggle}
 
 super + control {h , l}
   i3-msg "workspace {previous, next}"
@@ -27,9 +27,6 @@ super {_,+ control + shift} + {0-9}
 
 super + control + shift + {l,h}
   i3-msg "move workspace to output {left,right}"
-
-super + {_,+ shift} + {l, h, j, k}
-  i3-msg {focus, move} {right, left, up, down}
 
 Print {_,+ shift}
   scrot {_,-s}
