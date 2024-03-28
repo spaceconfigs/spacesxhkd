@@ -23,7 +23,7 @@ super {h, l}
   i3-msg "focus {left, right}"
 
 super + control {h , l}
-  i3-msg "workspace {previous, next}"
+  i3-msg "focus output {left, right}"
 
 super {control + shift} + {h, l}
   i3-msg {move container to workspace} {prev_on_output, next_on_output} 
