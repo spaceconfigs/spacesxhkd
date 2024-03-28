@@ -5,7 +5,6 @@ echo "-------------> Instalando SXHKD"
 # $pminstall sxhkd
 
 echo "-------------> Configurando SXHKD"
-mkdir -p $HOME/.config/sxhkd
-ln -sf $(pwd)/SXHKD/* $HOME/.config/sxhkd/
+ln -sf $(pwd) $HOME/.config/sxhkd
 
 killall -s SIGUSR1 sxhkd
