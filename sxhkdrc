@@ -14,7 +14,7 @@ super + control {h , l}
   i3-msg "workspace {prev, next}"
 
 super + control + shift {0-9, h, l}
-  WORKSPACE={0-9,next,prev}; \
+  WORKSPACE={0-9,prev,next}; \
   i3-msg "move window to workspace $WORKSPACE"; \
   i3-msg "workspace $WORKSPACE"
 
