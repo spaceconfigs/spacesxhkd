@@ -30,8 +30,13 @@ Super_L ; space ; apostrophe
 Super_L ; space ; a ; w
   qutebrowser
 
-Super_L ; space ; f ; e ; {d, R}
-  {alacritty --command nvim ~/.config/sxhkd/sxhkdrc, killall -s SIGUSR1 sxhkd}
+Super_L ; space ; f ; e ; d
+  alacritty --command nvim ~/.config/sxhkd/sxhkdrc
+
+Super_L ; space ; f ; e ; R
+  killall -s SIGUSR1 sxhkd; \
+  i3-msg reload; \
+  i3-msg restar
 
 Super_L ; space ; i ; P ; {P}
   {passmenu}
