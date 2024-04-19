@@ -41,7 +41,7 @@ Super_L ; space ; f ; e ; R
 Super_L ; space ; i ; P ; {P}
   {passmenu}
  
-Super_L ; space ; q ; {q,R}
+Super_L ; space ; q ; {Q,R}
   shutdown -{h,r} now
 
 Super_L ; space ; w ; {d, m}
