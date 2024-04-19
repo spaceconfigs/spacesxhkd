@@ -47,5 +47,5 @@ Super_L ; space ; q ; {q,R}
 Super_L ; space ; w ; {d, m}
   i3-msg {kill, fullscreen toggle}
   
-Super_L ; space ; w ; P ; P
+Super_L ; space ; w ; p ; P
   dunstctl close-all
