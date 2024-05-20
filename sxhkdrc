@@ -1,9 +1,23 @@
 XF86AudioRaiseVolume
-  pactl set-sink-volume 0 +1%
+  pactl set-sink-volume 0 +5%
 XF86AudioLowerVolume
-  pactl set-sink-volume 0 -1%
+  pactl set-sink-volume 0 -5%
 XF86AudioMute
   pactl set-sink-mute 0 toggle
+
+XF86MonBrightnessUp
+  notify-send "up"
+XF86MonBrightnessDown
+  notify-send "down"
+
+XF86AudioPlay
+  playerctl play-pause
+XF86AudioPause
+  playerctl play-pause
+XF86AudioNext
+  playerctl next
+XF86AudioPrev
+  playerctl previous
 
 super + Tab
   i3-msg "workspace back_and_forth"
@@ -14,7 +28,7 @@ super + space
 super {0-9}
   i3-msg workspace {0-9} 
 
-super {h, l}
+control {Left, Right}
   i3-msg "focus {left, right}"
 
 super + control {h , l}
@@ -31,28 +45,28 @@ Print {_,+ shift}
 Print + {_,shift +} control
   scrot {-e, -s -e} 'xclip -selection clipboard -t image/png -i $f; rm $f'
 
-Super_L ; space ; apostrophe
+Super_L ; apostrophe
   alacritty
 
-Super_L ; space ; a ; w
+Super_R ; a ; w
   qutebrowser
 
-Super_L ; space ; f ; e ; d
+Super_R ; f ; e ; d
   alacritty --command nvim ~/.config/sxhkd/sxhkdrc
 
-Super_L ; space ; f ; e ; R
+Super_R ; f ; e ; R
   killall -s SIGUSR1 sxhkd; \
   i3-msg reload; \
   i3-msg restar
 
-Super_L ; space ; i ; P ; {P}
+Super_L ; i ; P ; {P}
   {passmenu}
  
-Super_L ; space ; q ; {Q,R}
+Super_R ; q ; {Q,R}
   shutdown -{h,r} now
 
-Super_L ; space ; w ; {d, m}
+Super_R ; w ; {d, m}
   i3-msg {kill, fullscreen toggle}
   
-Super_L ; space ; w ; p ; P
+Super_R ; w ; p ; P
   dunstctl close-all
