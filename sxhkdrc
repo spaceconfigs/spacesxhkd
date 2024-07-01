@@ -22,16 +22,16 @@ XF86AudioPrev
 super + Tab
   i3-msg "workspace back_and_forth"
 
-super + space
-  dmenu_run -l 10 
+super + space ; colon
+  rofi -show drun -show-icons -lines 10
 
 super {0-9}
   i3-msg workspace {0-9} 
 
-control {Left, Right}
-  i3-msg "focus {left, right}"
+control {Left, Right, Down, Up}
+  i3-msg "focus {left, right, down, up}"
 
-super + control {h , l}
+super + control {h , l, j, k}
   i3-msg "workspace {prev, next}"
 
 super + control + shift {0-9, h, l}
@@ -45,28 +45,33 @@ Print {_,+ shift}
 Print + {_,shift +} control
   scrot {-e, -s -e} 'xclip -selection clipboard -t image/png -i $f; rm $f'
 
-Super_L ; apostrophe
+super + space ; apostrophe
   alacritty
 
-Super_R ; a ; w
+super + space ; a ; w
   qutebrowser
 
-Super_R ; f ; e ; d
+super + space ; f ; e ; d
   alacritty --command nvim ~/.config/sxhkd/sxhkdrc
 
-Super_R ; f ; e ; R
+super + space ; f ; e ; R
   killall -s SIGUSR1 sxhkd; \
   i3-msg reload; \
-  i3-msg restar
+  i3-msg restart; \
+  notify-send "Reloaded"
 
-Super_L ; i ; P ; {P}
+super + space ; i ; P ; {P}
   {passmenu}
  
-Super_R ; q ; {Q,R}
+super + space ; q ; {Q,R}
   shutdown -{h,r} now
 
-Super_R ; w ; {d, m}
+super + space ; w ; {d, m}
   i3-msg {kill, fullscreen toggle}
   
-Super_R ; w ; p ; P
+super + space ; w ; p ; P
   dunstctl close-all
+
+super + space ; {0-9}
+  WORKSPACE=$(rofi -dmenu -theme dmenu.rasi -filter "{0-9}"); \
+  i3-msg "workspace $WORKSPACE"
