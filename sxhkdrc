@@ -1,0 +1,155 @@
+XF86AudioRaiseVolume
+  pactl set-sink-volume 0 +5%
+XF86AudioLowerVolume
+  pactl set-sink-volume 0 -5%
+XF86AudioMute
+  pactl set-sink-mute 0 toggle
+
+XF86MonBrightnessUp
+  notify-send "up"
+XF86MonBrightnessDown
+  notify-send "down"
+
+XF86AudioPlay
+  playerctl play-pause
+XF86AudioPause
+  playerctl play-pause
+XF86AudioNext
+  playerctl next
+XF86AudioPrev
+  playerctl previous
+
+super + space; super + space
+  rofi -show drun
+
+control + {Left, Right, Down, Up}
+  dir={west,east,north,south}; \
+  bspc node "$dir.local" --focus || bspc monitor "$dir" --focus
+
+Print {_,+ shift}
+  sleep 1 && scrot --line mode=edge {_,--select}
+
+Print + {_,shift +} control
+  sleep 1 && scrot --line mode=edge {--exec, --select --exec} 'xclip -selection clipboard -t image/png -i $f; rm $f'
+
+super + space ; Tab
+  bspc node --focus last.local
+
+super + space ; quotedbl
+  wezterm
+
+super + space ; apostrophe
+  guake
+
+super + c
+  xclip -selection clipboard
+
+super + v
+  xclip -selection clipboard -o | xargs -I{} xdotool type --clearmodifiers {}
+
+super + space ; a ; m ; m
+  AUDIO_STATE_FILE="/tmp/audio_muted_state"; \
+  if [ -f "$AUDIO_STATE_FILE" ] && [ "$(cat "$AUDIO_STATE_FILE")" = "true" ]; then \
+    AUDIO_MUTED="false"; \
+  else \
+    AUDIO_MUTED="true"; \
+  fi; \
+  echo "$AUDIO_MUTED" > "$AUDIO_STATE_FILE"; \
+  notify-send "Audio $( [ "$AUDIO_MUTED" = "true" ] && echo "MUTED" || echo "UNMUTED")"; \
+  pactl set-sink-mute @DEFAULT_SINK@ toggle
+
+super + space ; a ; v ; k
+  pactl set-sink-mute @DEFAULT_SINK@ toggle
+
+super + space ; a ; w
+  qutebrowser
+
+super + space; b; 1
+  MONITOR="DP-1-8"; \
+  bspc node --to-monitor $MONITOR --follow; \
+  bspc monitor --focus $MONITOR
+
+super + space; b; 2
+  MONITOR="HDMI-1"; \
+  bspc node --to-monitor $MONITOR --follow; \
+  bspc monitor --focus $MONITOR
+
+super + space; b; 3
+  MONITOR="DP-1-9"; \
+  bspc node --to-monitor $MONITOR --follow; \
+  bspc monitor --focus $MONITOR
+
+super + space; b; b
+  .config/sxhkd/scripts/window_find.sh
+
+super + space; b; h
+  bspc node --flag hidden
+
+super + space ; b ; n
+  bspc node --focus next.local.window
+
+super + space ; b ; p
+  bspc node --focus prev.local.window
+
+super + space ; f ; e ; d
+  wezterm start -- nvim ~/.config/sxhkd/sxhkdrc; \
+  sleep 0.5; \
+  killall --signal SIGUSR1 sxhkd; \
+  wezterm start -- nvim ~/.config/bspwm/bspwmrc; \
+  bspc wm --restart; \
+  wezterm start -- nvim ~/.config/wezterm/wezterm.lua
+
+super + space ; f ; e ; R
+  sleep 0.5; \
+  killall --signal SIGUSR1 sxhkd; \
+  bspc wm --restart; \
+  notify-send "Reloaded"
+
+super + space ; i ; P ; p
+  passmenu
+
+super + space ; m ; i ; n
+  xdg-open "obsidian://new"
+
+super + space ; q ; Q
+    shutdown now
+
+super + space ; q ; R
+    reboot
+
+super + space ; t; m; b
+  battery_level=$(upower -i $(upower -e | grep battery) | grep --extended-regexp "percentage" | awk '{print $2}'); \
+  notify-send "Battery Level: $battery_level"
+
+super + space ; t; m; t
+  ~/.config/sxhkd/scripts/statusnotification.sh "📅 Date" --date
+
+super + space ; t ; m ; T
+  ~/.config/sxhkd/scripts/statusnotification.sh "⚙️ System Information" --all
+
+super + space ; w ; d
+    bspc node --close
+
+super + space ; w ; m
+  bspc desktop --layout next
+
+super + space ; w ; H
+  bspc node --swap west
+
+super + space ; w ; L
+  bspc node --swap east
+
+super + space ; w ; p ; m
+  dunstctl close-all
+
+super + space ; w ; p ; P
+  dunstctl close-all
+
+super + space; w ; S
+  bspc desktop --layout tiled; bspc node --preset south; rofi -show drun
+
+super + space ; w ; v
+  bspc desktop --layout tiled
+
+super + space ; w ; V
+  bspc desktop --layout tiled; bspc node --preset east; rofi -show drun
