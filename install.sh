@@ -1,10 +1,10 @@
 #!/bin/bash
 
-echo "-------------> Instalando SXHKD"
+echo "-------------> Instalando SWHKD"
 # $pminstall scrot
 # $pminstall sxhkd
 
-echo "-------------> Configurando SXHKD"
-ln -sf $(pwd) ~/.config/sxhkd
+echo "-------------> Configurando SWHKD"
+ln -sf $(pwd) ~/.config/swhkd
 
-killall -s SIGUSR1 sxhkd
+killall -s SIGUSR1 swhkd

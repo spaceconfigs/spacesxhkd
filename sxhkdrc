@@ -1,10 +1,12 @@
-XF86AudioRaiseVolume
-  pactl set-sink-volume 0 +5%
-XF86AudioLowerVolume
-  pactl set-sink-volume 0 -5%
-XF86AudioMute
-  pactl set-sink-mute 0 toggle
+#!/bin/sh
 
+XF86AudioRaiseVolume
+  pactl set-sink-volume @DEFAULT_SINK@ +5%
+
+XF86AudioLowerVolume
+  pactl set-sink-volume @DEFAULT_SINK@ -5%
+XF86AudioMute
+  pactl set-sink-mute @DEFAULT_SINK@ toggle
 XF86MonBrightnessUp
   notify-send "up"
 XF86MonBrightnessDown
@@ -26,26 +28,23 @@ control + {Left, Right, Down, Up}
   dir={west,east,north,south}; \
   bspc node "$dir.local" --focus || bspc monitor "$dir" --focus
 
-Print {_,+ shift}
-  sleep 1 && scrot --line mode=edge {_,--select}
+Print + control
+  maim --select %Y-%m-%d-%T-screenshot.png
 
-Print + {_,shift +} control
-  sleep 1 && scrot --line mode=edge {--exec, --select --exec} 'xclip -selection clipboard -t image/png -i $f; rm $f'
+Print + shift + control
+  maim --select | xclip -selection clipboard -t image/png -i
 
 super + space ; Tab
   bspc node --focus last.local
 
 super + space ; quotedbl
-  wezterm
+  ghostty
 
 super + space ; apostrophe
   guake
 
-super + c
-  xclip -selection clipboard
-
-super + v
-  xclip -selection clipboard -o | xargs -I{} xdotool type --clearmodifiers {}
+super + space ; dollar ; o ; g
+  qutebrowser https://chat.openai.com
 
 super + space ; a ; m ; m
   AUDIO_STATE_FILE="/tmp/audio_muted_state"; \
@@ -65,22 +64,19 @@ super + space ; a ; w
   qutebrowser
 
 super + space; b; 1
-  MONITOR="DP-1-8"; \
-  bspc node --to-monitor $MONITOR --follow; \
-  bspc monitor --focus $MONITOR
+  bspc node --to-monitor $DISPLAY_1 --follow; \
+  bspc monitor --focus $DISPLAY_1
 
 super + space; b; 2
-  MONITOR="HDMI-1"; \
-  bspc node --to-monitor $MONITOR --follow; \
-  bspc monitor --focus $MONITOR
+  bspc node --to-monitor $DISPLAY_2 --follow; \
+  bspc monitor --focus $DISPLAY_2
 
 super + space; b; 3
-  MONITOR="DP-1-9"; \
-  bspc node --to-monitor $MONITOR --follow; \
-  bspc monitor --focus $MONITOR
+  bspc node --to-monitor $DISPLAY_3 --follow; \
+  bspc monitor --focus $DISPLAY_3
 
-super + space; b; b
-  .config/sxhkd/scripts/window_find.sh
+super + space; b ; b
+  rofi -show window
 
 super + space; b; h
   bspc node --flag hidden
@@ -92,12 +88,12 @@ super + space ; b ; p
   bspc node --focus prev.local.window
 
 super + space ; f ; e ; d
-  wezterm start -- nvim ~/.config/sxhkd/sxhkdrc; \
+  ghostty -e nvim ~/.config/sxhkd/sxhkdrc; \
   sleep 0.5; \
   killall --signal SIGUSR1 sxhkd; \
-  wezterm start -- nvim ~/.config/bspwm/bspwmrc; \
+  ghostty -e nvim ~/.config/bspwm/bspwmrc; \
   bspc wm --restart; \
-  wezterm start -- nvim ~/.config/wezterm/wezterm.lua
+  ghostty -e nvim ~/.config/ghostty/config
 
 super + space ; f ; e ; R
   sleep 0.5; \
@@ -105,30 +101,68 @@ super + space ; f ; e ; R
   bspc wm --restart; \
   notify-send "Reloaded"
 
+super + space ; f ; e ; U
+  ghostty -e 'sudo pacman --sync --refresh --sysupgrade && yay --sync --refresh --sysupgrade'
+
+super + space ; f ; t
+  ghostty -e yazi
+
+super + space ; h ; b ; d
+  qutebrowser https://devdocs.io
+
 super + space ; i ; P ; p
   passmenu
 
+super + space ; l ; d
+    CHOICE=$(echo -e "Yes\nNo" \ | rofi -dmenu -i -l 2 -p "Kill session?") \
+    && [ "$CHOICE" = "Yes" ] \
+    && killall -9 -u "$USER"
+
 super + space ; m ; i ; n
-  xdg-open "obsidian://new"
+  NAME=$(date +%s); \
+  FILE="$HOME/Notes/$NAME.md"; \
+  touch "$FILE"; \
+  echo "---" > "$FILE"; \
+  echo "id: $NAME" >> "$FILE"; \
+  echo "tags: []" >> "$FILE"; \
+  echo "---" >> "$FILE"; \
+  echo "\n#" >> "$FILE"; \
+  neovide "$FILE"
+
+
 
 super + space ; q ; Q
-    shutdown now
+  shutdown now
 
 super + space ; q ; R
-    reboot
+  reboot
 
 super + space ; t; m; b
   battery_level=$(upower -i $(upower -e | grep battery) | grep --extended-regexp "percentage" | awk '{print $2}'); \
   notify-send "Battery Level: $battery_level"
 
 super + space ; t; m; t
-  ~/.config/sxhkd/scripts/statusnotification.sh "📅 Date" --date
+  polybar-msg action date module_toggle
 
 super + space ; t ; m ; T
-  ~/.config/sxhkd/scripts/statusnotification.sh "⚙️ System Information" --all
+  STATUSBAR_STATE_FILE="/tmp/statusbar_toggle_state"; \
+  if [ -f "$STATUSBAR_STATE_FILE" ]; then \
+    rm $STATUSBAR_STATE_FILE; \
+    eww close-all; \
+    bspc config bottom_padding 0; \
+  else \
+    eww open-many win0 win1 win2; \
+    touch $STATUSBAR_STATE_FILE; \
+  fi
+
+super + space ; w ; bracketright: {bracketleft, bracketright}
+  bspc node -z {left -20 0 || bspc node -z right -20 0, right 20 0 || bspc node -z left 20 0}
+
+super + space ; w ; bracketleft: {bracketleft, bracketright}
+  bspc node -z {left -20 0 || bspc node -z right -20 0, right 20 0 || bspc node -z left 20 0}
 
 super + space ; w ; d
-    bspc node --close
+  bspc node --close
 
 super + space ; w ; m
   bspc desktop --layout next
