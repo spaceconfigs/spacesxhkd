@@ -22,17 +22,30 @@ XF86AudioPrev
   playerctl previous
 
 super + space; super + space
-  rofi -show drun
+  sh -c ' \
+    pgrep -x ulauncher >/dev/null || ( \
+      ulauncher --hide-window >/dev/null 2>&1 & \
+    ); \
+    for i in 1 2 3 4 5 6 7 8 9 10; do \
+      ulauncher-toggle && exit 0; \
+    done \
+  '
 
 control + {Left, Right, Down, Up}
   dir={west,east,north,south}; \
   bspc node "$dir.local" --focus || bspc monitor "$dir" --focus
 
+Print
+  QT_ENABLE_HIGHDPI_SCALING=0 flameshot gui
+
 Print + control
-  maim --select %Y-%m-%d-%T-screenshot.png
+  QT_ENABLE_HIGHDPI_SCALING=0 flameshot screen --clipboard
+
+Print + shift
+  QT_ENABLE_HIGHDPI_SCALING=0 flameshot gui --accept-on-select
 
 Print + shift + control
-  maim --select | xclip -selection clipboard -t image/png -i
+  QT_ENABLE_HIGHDPI_SCALING=0 flameshot gui --clipboard --accept-on-select
 
 super + space ; Tab
   bspc node --focus last.local
@@ -40,8 +53,8 @@ super + space ; Tab
 super + space ; quotedbl
   ghostty
 
-super + space ; apostrophe
-  guake
+super + space ; ctrl + backslash
+  xkb-switch -n; notify-send -t 1200 "Keyboard layout" "$(xkb-switch)"
 
 super + space ; dollar ; o ; g
   qutebrowser https://chat.openai.com
@@ -105,13 +118,31 @@ super + space ; f ; e ; U
   ghostty -e 'sudo pacman --sync --refresh --sysupgrade && yay --sync --refresh --sysupgrade'
 
 super + space ; f ; t
-  ghostty -e yazi
+  ghostty -e 'yazi'
 
 super + space ; h ; b ; d
   qutebrowser https://devdocs.io
 
 super + space ; i ; P ; p
   passmenu
+
+super + space ; l ; Tab
+  sh -c 'f=$(bspc query -M -m focused --names); for m in $(bspc query -M --names); do bspc monitor -f "$m"; bspc desktop -f last.local; done; bspc monitor -f "$f"'
+
+super + space ; l ; n
+  sh -c 'f=$(bspc query -M -m focused --names); for m in $(bspc query -M --names); do bspc monitor -f "$m"; bspc desktop -f next.local; done; bspc monitor -f "$f"'
+
+super + space ; l ; p
+  sh -c 'f=$(bspc query -M -m focused --names); for m in $(bspc query -M --names); do bspc monitor -f "$m"; bspc desktop -f prev.local; done; bspc monitor -f "$f"'
+
+super + space ; l ; l
+  sh -c 'fm=$(bspc query -M -m focused --names); names=$(bspc query -D -m focused --names); d=$(printf "%s\n" "$names" | rofi -dmenu -p "Desktop"); [ -n "$d" ] || exit 0; i=$(printf "%s\n" "$names" | grep -nxF -- "$d" | head -n1 | cut -d: -f1); [ -n "$i" ] || exit 0; for m in $(bspc query -M --names); do bspc desktop -f "$m:^$i"; done; bspc monitor -f "$fm"'
+
+super + space ; l ; s
+  sh -c 'fm=$(bspc query -M -m focused --names); next=$(( $(bspc query -D --names | grep -E "^[0-9]+$" | sort -n | tail -1) + 1 )); [ -z "$next" ] && next=1; for m in $(bspc query -M --names); do bspc monitor "$m" -a "$next"; done; for m in $(bspc query -M --names); do bspc desktop -f "$m:^$next"; done; bspc monitor -f "$fm"'
+
+super + space ; l ; R
+  sh -c 'old=$(bspc query -D -d focused --names) || exit 1; new=$(rofi -dmenu -p "Rename $old to" </dev/null) || exit 1; [ -n "$new" ] || exit 0; while IFS= read -r m; do bspc query -D -m "$m" --names | grep -qx "$old" && bspc desktop "${m}:^${old}" -n "$new"; done < <(bspc query -M --names)'
 
 super + space ; l ; d
     CHOICE=$(echo -e "Yes\nNo" \ | rofi -dmenu -i -l 2 -p "Kill session?") \
@@ -131,11 +162,15 @@ super + space ; m ; i ; n
 
 
 
-super + space ; q ; Q
-  shutdown now
+super + space ; q ; q
+    CHOICE=$(echo -e "Yes\nNo" \ | rofi -dmenu -i -l 2 -p "Shutdown now?") \
+    && [ "$CHOICE" = "Yes" ] \
+    && shutdown now
 
-super + space ; q ; R
-  reboot
+super + space ; q ; r
+    CHOICE=$(echo -e "Yes\nNo" \ | rofi -dmenu -i -l 2 -p "Reboot now?") \
+    && [ "$CHOICE" = "Yes" ] \
+    && shutdown --reboot now
 
 super + space ; t; m; b
   battery_level=$(upower -i $(upower -e | grep battery) | grep --extended-regexp "percentage" | awk '{print $2}'); \
